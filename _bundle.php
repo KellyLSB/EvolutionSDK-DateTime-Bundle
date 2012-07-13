@@ -145,7 +145,12 @@ class Bundle {
 		if($timeDiff->m > 0) return $plural($timeDiff->m, 'month').' ago';
 		if($timeDiff->d > 0) return $plural($timeDiff->d, 'day').' ago';
 		if($timeDiff->h > 0) return $plural($timeDiff->h, 'hour').' ago';
-		if($timeDiff->i > 0) return $plural($timeDiff->i, 'minute').' ago';
+		if($timeDiff->i > 0) {
+			if($timeDiff->i < 2) return 'just a minute ago';
+			if($timeDiff->i < 4) return 'a few minutes ago';
+			return $plural($timeDiff->i, 'minute').' ago';
+		}
+		if($timeDiff->s < 30) return 'just a second ago';
 		return $plural($timeDiff->s, 'second').' ago';
 	}
 
