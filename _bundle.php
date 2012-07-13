@@ -20,8 +20,7 @@ class Bundle {
 	/**
 	 * Load a date or timestamp
 	 */
-	public function date($time = null, $zone = null) {
-		if(empty($time)) $time = time();
+	public function date($time = 'now', $zone = null) {
 
 		// Set the timezome
 		if(!empty($zone)) $this->zone = $zone;
@@ -91,6 +90,63 @@ class Bundle {
 
 		// Return the timezone
 		return $this->zone;
+	}
+
+	/**
+	 * Is the currently loaded date in the future
+	 */
+	public function isFutureDate($date = null, $zone = null) {
+
+		// If specifying a specific date pass thru to the date function
+		if(!empty($date)) $this->date($date, !is_null($zone) ? $zone : null);
+
+		/**
+		 * Get the time difference
+		 */
+		$nowTime = new DateTime('now', new DateTimeZone('UTC'));
+		$timeDiff = $nowTime->diff($this->date);
+
+		/**
+		 * Do the math
+		 */
+		if($timeDiff->invert)
+			return false;
+		else return true;
+	}
+
+	/**
+	 * Time Since Function
+	 */
+	public function timeSince($date = null, $zone = null) {
+
+		// If specifying a specific date pass thru to the date function
+		if(!empty($date)) $this->date($date, !is_null($zone) ? $zone : null);
+
+		/**
+		 * Get the time difference
+		 */
+		$nowTime = new DateTime('now', new DateTimeZone('UTC'));
+		$timeDiff = $nowTime->diff($this->date);
+
+		// We only want to process past dates
+		if(!$timeDiff->invert) throw new Exception("The date you specified is in the future");
+
+		/**
+		 * Bluralize the word if the count is greater then one
+		 */
+		$plural = function($c, $t) {
+			return $c.' '.($c > 1 ? $t.'s' : $t);
+		};
+
+		/**
+		 * Return rough estimate of time since the date
+		 */
+		if($timeDiff->y > 0) return $plural($timeDiff->y, 'year').' ago';
+		if($timeDiff->m > 0) return $plural($timeDiff->m, 'month').' ago';
+		if($timeDiff->d > 0) return $plural($timeDiff->d, 'day').' ago';
+		if($timeDiff->h > 0) return $plural($timeDiff->h, 'hour').' ago';
+		if($timeDiff->i > 0) return $plural($timeDiff->i, 'minute').' ago';
+		return $plural($timeDiff->s, 'second').' ago';
 	}
 
 	/**
