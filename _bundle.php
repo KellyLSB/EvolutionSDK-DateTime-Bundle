@@ -42,8 +42,8 @@ class Bundle {
 	 */
 	public function getFormat($format = null, $reset = false) {
 
-		// If no format is passed reset the object
-		if(empty($format)) throw new Exception("You cannot call `e::\$datetime->format()` without specifing a date format.");
+		// If no format is passed use the saved one
+		if(empty($format)) $format = $this->format;
 
 		// Reset the date object
 		if($reset) $this->date();
