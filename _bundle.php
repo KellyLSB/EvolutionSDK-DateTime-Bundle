@@ -42,18 +42,18 @@ class Bundle {
 	 */
 	public function getFormat($format = null, $reset = false) {
 
-		// If no format is passed use the saved one
-		if(empty($format)) $format = $this->format;
-
 		// Reset the date object
 		if($reset) $this->date();
 
 		// Set the format to the object
-		$this->format = $format;
+		if(!empty($format)) $this->format = $format;
 
 		// Return date
 		if(!empty($this->date))
 			return $this->date->format($this->format);
+
+		// Else create a new date and return it
+		else return $this->date();
 	}
 
 	/**
